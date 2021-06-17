@@ -1,6 +1,47 @@
 '''
 Coffee Machine program. Choose coffee type, put coins in, get coffee.
 '''
+
+profit = 0
+
+program_on = True
+
+def get_coins(type):
+    print(f"Insert coins (Cost of {type}: ${MENU[type]['cost']})")
+
+    quarters = int(input("How many quarters?: "))
+    dimes = int(input("How many dimes?: "))
+    nickles = int(input("How many nickles?: "))
+    pennies = int(input("How many pennies?: "))
+
+    return quarters*0.25 + dimes*0.1 + nickles*0.05 + pennies*0.01
+
+
+def make_coffee(type):
+    for ingredient_name, ingredient_amount in MENU[type]["ingredients"].items():
+        resources[ingredient_name] -= ingredient_amount
+
+
+def enough_ingredients(type):
+    for ingredient, ingredient_required in MENU["espresso"]["ingredients"].items():
+            # Checking if not enough resource
+        if  ingredient_required > resources[ingredient]:
+            print(f"Sorry, not enough {ingredient}")
+            return False
+    return True
+
+def enough_coins(type, coins):
+    if coins < MENU[type]["cost"]:
+        print(f"Sorry, not enough coins.Cost:{MENU[type]['cost']}). Amount given: {coins}")
+        return False
+    else:
+        change = coins - MENU[type]["cost"]
+        change = round(change, 2)
+        global profit
+        profit += MENU[type]["cost"]
+
+        print(f"You gave ${coins}. Your change: ${change}")
+        return True
 MENU = {
     "espresso": {
         "ingredients": {
@@ -27,8 +68,6 @@ MENU = {
     }
 }
 
-profit = 0
-
 resources = {
     "water": 300,
     "milk": 200,
@@ -39,21 +78,7 @@ resources_units ={
     "milk": "ml",
     "coffee": "g",
 }
-program_on = True
 
-def get_coins(type):
-    print(f"Insert coins (Cost of {type}: ${MENU[type]['cost']})")
-
-    quarters = int(input("How many quarters?: "))
-    dimes = int(input("How many dimes?: "))
-    nickles = int(input("How many nickles?: "))
-    pennies = int(input("How many pennies?: "))
-
-    return quarters*0.25 + dimes*0.1 + nickles*0.05 + pennies*0.01
-
-def make_coffee(type):
-    for ingredient_name, ingredient_amount in MENU[type]["ingredients"].items():
-        resources[ingredient] -= ingredient_amount
 
 while program_on:
     choice = input("What would you like? (espresso/latte/cappuccino): ")
@@ -67,74 +92,31 @@ while program_on:
         program_on = False
 
     elif choice == 'espresso':
+        if enough_ingredients(choice):
+            total_coins = get_coins(choice)
 
-        for ingredient, ingredient_required in MENU["espresso"]["ingredients"].items():
-            # Checking if not enough resource
-            if  ingredient_required > resources[ingredient]:
-                print(f"Sorry, not enough {ingredient}")
+            if enough_coins(choice, total_coins):
+                make_coffee(choice)
 
-            # If enough resources
-            else:
-                total_coins = get_coins(choice)
-
-                if total_coins < MENU["espresso"]["cost"]:
-                    print(f"Sorry, not enough coins.Cost:{MENU['espresso']['cost']}). Amount given: {total_coins}")
-                    break
-                else:
-                    change = total_coins - MENU["espresso"]["cost"]
-                    profit += MENU["espresso"]["cost"]
-
-                    print(f"You gave ${total_coins}. Your change: ${change}")
-
-                    make_coffee(choice)
-
-                    print("Here's your {choice}, enjoy")
+                print(f"Here's your {choice}, enjoy")
 
     elif choice == 'latte':
-        for ingredient, ingredient_required in MENU["latte"]["ingredients"].items():
-            # Checking if not enough resource
-            if  ingredient_required > resources[ingredient]:
-                print(f"Sorry, not enough {ingredient}")
+        if enough_ingredients(choice):
+            total_coins = get_coins(choice)
 
-            # If enough resources
-            else:
-                total_coins = get_coins(choice)
+            if enough_coins(choice, total_coins):
+                make_coffee(choice)
 
-                if total_coins < MENU["latte"]["cost"]:
-                    print(f"Sorry, not enough coins.Cost:{MENU['latte']['cost']}). Amount given: {total_coins}")
-                    break
-                else:
-                    change = total_coins - MENU["latte"]["cost"]
-                    profit += MENU["espresso"]["cost"]
-
-                    print(f"You gave ${total_coins}. Your change: ${change}")
-
-                    make_coffee(choice)
-
-                    print("Here's your {choice}, enjoy")
+                print(f"Here's your {choice}, enjoy")
 
     elif choice == 'cappuccino':
-        for ingredient, ingredient_required in MENU["cappuccino"]["ingredients"].items():
-            # Checking if not enough resource
-            if  ingredient_required > resources[ingredient]:
-                print(f"Sorry, not enough {ingredient}")
+        if enough_ingredients(choice):
+            total_coins = get_coins(choice)
 
-            # If enough resources
-            else:
-                total_coins = get_coins(choice)
+            if enough_coins(choice, total_coins):
+                make_coffee(choice)
 
-                if total_coins < MENU["cappuccino"]["cost"]:
-                    print(f"Sorry, not enough coins.Cost:{MENU['cappuccino']['cost']}). Amount given: {total_coins}")
-                    break
-                else:
-                    change = total_coins - MENU["cappuccino"]["cost"]
-                    profit += MENU["espresso"]["cost"]
-
-                    print(f"You gave ${total_coins}. Your change: ${change}")
-
-                    make_coffee(choice)
-
-                    print("Here's your {choice}, enjoy")
+                print(f"Here's your {choice}, enjoy")
 
     # TODO 1: print report
     # TODO 2: check resources sufficient?

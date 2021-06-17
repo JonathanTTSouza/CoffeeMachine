@@ -1,47 +1,51 @@
-'''
-Coffee Machine program. Choose coffee type, put coins in, get coffee.
-'''
+"""
+Coffee Machine program. Choose coffee drink_type, put coins in, get coffee.
+"""
 
 profit = 0
 
 program_on = True
 
-def get_coins(type):
-    print(f"Insert coins (Cost of {type}: ${MENU[type]['cost']})")
+
+def get_coins(drink_type):
+    print(f"Insert coins (Cost of {drink_type}: ${MENU[drink_type]['cost']})")
 
     quarters = int(input("How many quarters?: "))
     dimes = int(input("How many dimes?: "))
     nickles = int(input("How many nickles?: "))
     pennies = int(input("How many pennies?: "))
 
-    return quarters*0.25 + dimes*0.1 + nickles*0.05 + pennies*0.01
+    return quarters * 0.25 + dimes * 0.1 + nickles * 0.05 + pennies * 0.01
 
 
-def make_coffee(type):
-    for ingredient_name, ingredient_amount in MENU[type]["ingredients"].items():
+def make_coffee(drink_type):
+    for ingredient_name, ingredient_amount in MENU[drink_type]["ingredients"].items():
         resources[ingredient_name] -= ingredient_amount
 
 
-def enough_ingredients(type):
-    for ingredient, ingredient_required in MENU["espresso"]["ingredients"].items():
-            # Checking if not enough resource
-        if  ingredient_required > resources[ingredient]:
+def enough_ingredients(drink_type):
+    for ingredient, ingredient_required in MENU[drink_type]["ingredients"].items():
+        # Checking if not enough resource
+        if ingredient_required > resources[ingredient]:
             print(f"Sorry, not enough {ingredient}")
             return False
     return True
 
-def enough_coins(type, coins):
-    if coins < MENU[type]["cost"]:
-        print(f"Sorry, not enough coins.Cost:{MENU[type]['cost']}). Amount given: {coins}")
+
+def enough_coins(drink_type, coins):
+    if coins < MENU[drink_type]["cost"]:
+        print(f"Sorry, not enough coins.Cost:{MENU[drink_type]['cost']}). Amount given: {coins}")
         return False
     else:
-        change = coins - MENU[type]["cost"]
+        change = coins - MENU[drink_type]["cost"]
         change = round(change, 2)
         global profit
-        profit += MENU[type]["cost"]
+        profit += MENU[drink_type]["cost"]
 
         print(f"You gave ${coins}. Your change: ${change}")
         return True
+
+
 MENU = {
     "espresso": {
         "ingredients": {
@@ -73,16 +77,15 @@ resources = {
     "milk": 200,
     "coffee": 100,
 }
-resources_units ={
+resources_units = {
     "water": "ml",
     "milk": "ml",
     "coffee": "g",
 }
 
-
 while program_on:
     choice = input("What would you like? (espresso/latte/cappuccino): ")
-    
+
     if choice == 'report':
         for key, value in resources.items():
             print(key.capitalize() + ": " + str(value) + resources_units[key])
@@ -117,9 +120,3 @@ while program_on:
                 make_coffee(choice)
 
                 print(f"Here's your {choice}, enjoy")
-
-    # TODO 1: print report
-    # TODO 2: check resources sufficient?
-    # TODO 3: process coins
-    # TODO 4: check transaction successfull
-    # TODO 5: make coffee 
